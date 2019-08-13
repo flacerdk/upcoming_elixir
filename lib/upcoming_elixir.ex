@@ -39,13 +39,15 @@ defmodule Upcoming do
 
   def fetch(relative_url) do
     {:ok, response} = append_url(relative_url) |> Mojito.get
-    Poison.decode!(response.body)
-    |> Map.get("resultsPage")
-    |> Map.get("results")
-    |> Map.get("event")
+    %{"resultsPage" => %{"results" => results}} = Poison.decode!(response.body)
+    results
   end
 
   def get_venue_calendar(venue_id) do
-    fetch("/venues/#{venue_id}/calendar.json")
+    fetch("/venues/#{venue_id}/calendar.json") |> Map.get("event")
+  end
+
+  def get_venues(location) do
+    fetch("/search/venues.json?query=#{location}") |> Map.get("venue")
   end
 end
