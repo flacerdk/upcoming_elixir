@@ -24,8 +24,17 @@ defmodule Upcoming do
   end
 
   def append_url(relative_url) do
-    base_path = Map.get(base_url(), :path)
-    base_url() |> Map.put(:path, base_path <> relative_url)
+    %{:path => base_path, :query => base_query} = base_url()
+    %{:path => additional_path, :query => additional_query} = URI.parse(relative_url)
+    query = Map.merge(
+      URI.decode_query(base_query || ""),
+      URI.decode_query(additional_query || "")
+    )
+    |> URI.encode_query
+
+    base_url()
+    |> Map.put(:path, base_path <> additional_path)
+    |> Map.put(:query, query)
   end
 
   def fetch(relative_url) do
