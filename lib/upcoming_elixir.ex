@@ -31,12 +31,17 @@ defmodule Upcoming do
   end
 
   def get_venue_calendar(venue_id) do
-    %{:results => %{"event" => events}} = Fetch.fetch_json("/venues/#{venue_id}/calendar.json")
-    events
+    %{"resultsPage" => %{"results" => results}} =
+      Fetch.fetch_json("/venues/#{venue_id}/calendar.json")
+
+    case results do
+      %{"event" => events} -> events
+      _ -> []
+    end
   end
 
   def get_venues(location, page \\ 1, per_page \\ 50) do
-    %{:results => results, :max => max} =
+    %{"resultsPage" => %{"results" => results, "totalEntries" => max}} =
       Fetch.fetch_json("/search/venues.json?query=#{location}", page, per_page)
 
     case results do

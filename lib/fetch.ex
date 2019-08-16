@@ -1,4 +1,6 @@
 defmodule Fetch do
+  use Retry
+
   defp base_url do
     api_key = Application.get_env(:upcoming_elixir, :APIKey)
 
@@ -8,7 +10,7 @@ defmodule Fetch do
 
   defp append_url(relative_url, base \\ base_url()) do
     %{:path => base_path, :query => base_query} = base
-    %{:path => additional_path, :query => additional_query} = URI.parse(relative_url)
+    %{:path => additional_path, :query => additional_query} = relative_url
 
     query =
       Map.merge(
@@ -22,19 +24,32 @@ defmodule Fetch do
     |> Map.put(:query, query)
   end
 
-  def fetch(relative_url, page \\ 1, per_page \\ 50) do
-    {:ok, response} =
-      append_url("?page=#{page}&per_page=#{per_page}", append_url(relative_url)) |> Mojito.get()
+  def fetch(url, page \\ 1, per_page \\ 50) do
+    parsed_url = URI.parse(url)
 
-    response
+    case parsed_url do
+      %{:scheme => "file", :host => file} ->
+        {:ok, File.read!(file)}
+
+      _ ->
+        retry with: exponential_backoff() |> randomize |> expiry(10_000) do
+          Mojito.get(
+            append_url(URI.parse("?page=#{page}&per_page=#{per_page}"), append_url(parsed_url))
+          )
+        after
+          {:ok, %Mojito.Response{body: body}} -> {:ok, body}
+        else
+          error -> error
+        end
+    end
   end
 
   def fetch_json(relative_url, page \\ 1, per_page \\ 50) do
     response = fetch(relative_url, page, per_page)
 
-    %{"resultsPage" => %{"results" => results, "totalEntries" => total_entries}} =
-      Poison.decode!(response.body)
-
-    %{:results => results, :max => total_entries}
+    case response do
+      {:ok, body} -> Poison.decode!(body)
+      _ -> "Error"
+    end
   end
 end
