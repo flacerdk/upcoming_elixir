@@ -30,47 +30,14 @@ defmodule Upcoming do
     ]
   end
 
-  def base_url do
-    api_key = Application.get_env(:upcoming_elixir, :APIKey)
-
-    URI.parse("https://api.songkick.com/api/3.0")
-    |> Map.put(:query, URI.encode_query(%{"apikey" => api_key}))
-  end
-
-  def append_url(relative_url, base \\ base_url()) do
-    %{:path => base_path, :query => base_query} = base
-    %{:path => additional_path, :query => additional_query} = URI.parse(relative_url)
-
-    query =
-      Map.merge(
-        URI.decode_query(base_query || ""),
-        URI.decode_query(additional_query || "")
-      )
-      |> URI.encode_query()
-
-    base_url()
-    |> Map.put(:path, base_path <> (additional_path || ""))
-    |> Map.put(:query, query)
-  end
-
-  def fetch(relative_url, page \\ 1, per_page \\ 50) do
-    {:ok, response} =
-      append_url("?page=#{page}&per_page=#{per_page}", append_url(relative_url)) |> Mojito.get()
-
-    %{"resultsPage" => %{"results" => results, "totalEntries" => total_entries}} =
-      Poison.decode!(response.body)
-
-    %{:results => results, :max => total_entries}
-  end
-
   def get_venue_calendar(venue_id) do
-    %{:results => %{"event" => events}} = fetch("/venues/#{venue_id}/calendar.json")
+    %{:results => %{"event" => events}} = Fetch.fetch_json("/venues/#{venue_id}/calendar.json")
     events
   end
 
   def get_venues(location, page \\ 1, per_page \\ 50) do
     %{:results => results, :max => max} =
-      fetch("/search/venues.json?query=#{location}", page, per_page)
+      Fetch.fetch_json("/search/venues.json?query=#{location}", page, per_page)
 
     case results do
       %{"venue" => venues} ->
