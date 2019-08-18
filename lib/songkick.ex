@@ -1,4 +1,4 @@
-defmodule Fetch do
+defmodule Songkick do
   use Retry
 
   defp base_url do
@@ -8,23 +8,7 @@ defmodule Fetch do
     |> Map.put(:query, URI.encode_query(%{"apikey" => api_key}))
   end
 
-  defp append_url(relative_url, base \\ base_url()) do
-    %{:path => base_path, :query => base_query} = base
-    %{:path => additional_path, :query => additional_query} = relative_url
-
-    query =
-      Map.merge(
-        URI.decode_query(base_query || ""),
-        URI.decode_query(additional_query || "")
-      )
-      |> URI.encode_query()
-
-    base_url()
-    |> Map.put(:path, base_path <> (additional_path || ""))
-    |> Map.put(:query, query)
-  end
-
-  def fetch(url, page \\ 1, per_page \\ 50) do
+  defp fetch(url, page, per_page) do
     parsed_url = URI.parse(url)
 
     case parsed_url do
@@ -34,7 +18,10 @@ defmodule Fetch do
       _ ->
         retry with: exponential_backoff() |> randomize |> expiry(10_000) do
           Mojito.get(
-            append_url(URI.parse("?page=#{page}&per_page=#{per_page}"), append_url(parsed_url))
+            URL.append(
+              URI.parse("?page=#{page}&per_page=#{per_page}"),
+              URL.append(parsed_url, base_url())
+            )
           )
         after
           {:ok, %Mojito.Response{body: body}} -> {:ok, body}
@@ -51,5 +38,22 @@ defmodule Fetch do
       {:ok, body} -> Jason.decode!(body)
       _ -> "Error"
     end
+  end
+
+  def fetch_venue_calendar(venue_id) do
+    %{"resultsPage" => %{"results" => results}} = fetch_json("/venues/#{venue_id}/calendar.json")
+
+    %{results: results}
+  end
+
+  def fetch_events_from_file(filename) do
+    fetch_json(filename)
+  end
+
+  def fetch_events_from_location(location, page \\ 1, per_page \\ 50) do
+    %{"resultsPage" => %{"results" => results, "totalEntries" => max}} =
+      fetch_json("/search/venues.json?query=#{location}", page, per_page)
+
+    %{results: results, max: max}
   end
 end
