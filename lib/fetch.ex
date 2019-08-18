@@ -48,7 +48,7 @@ defmodule Fetch do
     response = fetch(relative_url, page, per_page)
 
     case response do
-      {:ok, body} -> Poison.decode!(body)
+      {:ok, body} -> Jason.decode!(body)
       _ -> "Error"
     end
   end
