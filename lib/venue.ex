@@ -37,4 +37,13 @@ defmodule Venue do
       _ -> []
     end
   end
+
+  def get_all_calendars(venues) do
+    Enum.flat_map(venues, fn v ->
+      calendar = get_calendar(v)
+
+      :timer.sleep(3000)
+      calendar
+    end)
+  end
 end
