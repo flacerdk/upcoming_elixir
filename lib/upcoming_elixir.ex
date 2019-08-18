@@ -29,31 +29,4 @@ defmodule Upcoming do
       32939
     ]
   end
-
-  def get_venue_calendar(venue_id) do
-    %{"resultsPage" => %{"results" => results}} =
-      Fetch.fetch_json("/venues/#{venue_id}/calendar.json")
-
-    case results do
-      %{"event" => events} -> events
-      _ -> []
-    end
-  end
-
-  def get_venues(location, page \\ 1, per_page \\ 50) do
-    %{"resultsPage" => %{"results" => results, "totalEntries" => max}} =
-      Fetch.fetch_json("/search/venues.json?query=#{location}", page, per_page)
-
-    case results do
-      %{"venue" => venues} ->
-        if (page - 1) * length(venues) >= max do
-          venues
-        else
-          venues ++ get_venues(location, page + 1, per_page)
-        end
-
-      _ ->
-        []
-    end
-  end
 end
