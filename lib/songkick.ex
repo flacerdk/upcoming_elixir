@@ -46,11 +46,11 @@ defmodule Songkick do
     %{results: results}
   end
 
-  def fetch_events_from_file(filename) do
+  def fetch_venues_from_file(filename) do
     fetch_json(filename)
   end
 
-  def fetch_events_from_location(location, page \\ 1, per_page \\ 50) do
+  def fetch_venues_from_location(location, page \\ 1, per_page \\ 50) do
     %{"resultsPage" => %{"results" => results, "totalEntries" => max}} =
       fetch_json("/search/venues.json?query=#{location}", page, per_page)
 

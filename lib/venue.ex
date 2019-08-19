@@ -6,11 +6,11 @@ defmodule Venue do
   end
 
   def get_from_file(filename) do
-    Songkick.fetch_events_from_file(filename) |> Enum.map(&parse/1)
+    Songkick.fetch_venues_from_file(filename) |> Enum.map(&parse/1)
   end
 
   def get_from_location(location, page \\ 1, per_page \\ 50) do
-    %{results: results, max: max} = Songkick.fetch_events_from_location(location, page, per_page)
+    %{results: results, max: max} = Songkick.fetch_venues_from_location(location, page, per_page)
 
     case results do
       %{"venue" => venues} ->
