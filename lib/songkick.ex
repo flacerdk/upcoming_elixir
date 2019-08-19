@@ -31,7 +31,7 @@ defmodule Songkick do
     end
   end
 
-  def fetch_json(relative_url, page \\ 1, per_page \\ 50) do
+  defp fetch_json(relative_url, page \\ 1, per_page \\ 50) do
     response = fetch(relative_url, page, per_page)
 
     case response do
