@@ -29,4 +29,4 @@ use Mix.Config
 #
 #     import_config "#{Mix.env()}.exs"
 
-config :upcoming_elixir, APIKey: System.get_env("SONGKICK_API_KEY") || "API_KEY_NOT_SET"
+import_config "config.secret.exs"

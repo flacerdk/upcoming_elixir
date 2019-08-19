@@ -2,7 +2,7 @@ defmodule Songkick do
   use Retry
 
   defp base_url do
-    api_key = Application.get_env(:upcoming_elixir, :APIKey)
+    api_key = Application.get_env(:upcoming_elixir, :api_key)
 
     URI.parse("https://api.songkick.com/api/3.0")
     |> Map.put(:query, URI.encode_query(%{"apikey" => api_key}))
