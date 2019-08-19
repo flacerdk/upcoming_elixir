@@ -18,6 +18,7 @@ defmodule UpcomingWeb.Router do
 
     get "/", PageController, :index
     get "/venues", VenueController, :index
+    get "/venues/:venue_id", VenueController, :show
   end
 
   # Other scopes may use custom stacks.
