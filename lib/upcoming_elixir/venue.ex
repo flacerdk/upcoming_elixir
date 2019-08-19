@@ -1,8 +1,8 @@
-defmodule Venue do
+defmodule Upcoming.Venue do
   defstruct [:id, :name]
 
   def parse(%{"id" => id, "displayName" => name}) do
-    %Venue{id: id, name: name}
+    %Upcoming.Venue{id: id, name: name}
   end
 
   def get_from_file(filename) do
@@ -27,7 +27,7 @@ defmodule Venue do
     end
   end
 
-  def get_calendar(%Venue{id: venue_id}) do
+  def get_calendar(%Upcoming.Venue{id: venue_id}) do
     case Songkick.fetch_venue_calendar(venue_id) do
       %{"event" => events} -> Enum.map(events, &Event.parse/1)
       _ -> []

@@ -1,0 +1,8 @@
+<div>
+  <h2>Venues</h2>
+  <ul>
+  <%= for venue <- @venues do %>
+    <li><%= venue.name %></li>
+  <% end %>
+  </ul>
+</div>
