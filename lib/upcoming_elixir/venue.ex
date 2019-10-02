@@ -1,5 +1,17 @@
 defmodule Upcoming.Venue do
-  defstruct [:id, :name]
+  use Ecto.Schema
+
+  schema "venues" do
+    field :songkick_id, :string
+    field :name, :string
+  end
+
+  def changeset(venue, params \\ %{}) do
+    venue
+    |> Ecto.Changeset.cast(params, [:songkick_id, :name])
+    |> Ecto.Changeset.validate_required([:songkick_id, :name])
+    |> Ecto.Changeset.unique_constraint(:songkick_id)
+  end
 
   def parse(%{"id" => id, "displayName" => name}) do
     %Upcoming.Venue{id: id, name: name}
