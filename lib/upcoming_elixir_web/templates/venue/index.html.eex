@@ -2,7 +2,7 @@
   <h2>Venues</h2>
   <ul>
   <%= for venue <- @venues do %>
-    <li><%= venue.name %></li>
+    <li><a href="/venues/<%= venue.songkick_id %>"><%= venue.name %></a></li>
   <% end %>
   </ul>
 </div>

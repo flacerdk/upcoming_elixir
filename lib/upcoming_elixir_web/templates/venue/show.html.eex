@@ -1,3 +1,8 @@
 <div>
-  <%= @venue.id %>: <%= @venue.name %>
+  <h2>Events</h2>
+  <ul>
+  <%= for event <- @events do %>
+    <li><%= event.date %>: <%= event.artist %></li>
+  <% end %>
+  </ul>
 </div>
