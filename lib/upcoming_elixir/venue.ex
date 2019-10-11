@@ -18,11 +18,12 @@ defmodule Upcoming.Venue do
   end
 
   def get_from_file(filename) do
-    Songkick.fetch_venues_from_file(filename) |> Enum.map(&parse/1)
+    Upcoming.Songkick.fetch_venues_from_file(filename) |> Enum.map(&parse/1)
   end
 
   def get_from_location(location, page \\ 1, per_page \\ 50) do
-    %{results: results, max: max} = Songkick.fetch_venues_from_location(location, page, per_page)
+    %{results: results, max: max} =
+      Upcoming.Songkick.fetch_venues_from_location(location, page, per_page)
 
     case results do
       %{"venue" => venues} ->
@@ -39,9 +40,9 @@ defmodule Upcoming.Venue do
     end
   end
 
-  def get_calendar(%Upcoming.Venue{id: venue_id}) do
-    case Songkick.fetch_venue_calendar(venue_id) do
-      %{"event" => events} -> Enum.map(events, &Event.parse/1)
+  def get_calendar(%Upcoming.Venue{songkick_id: songkick_id}) do
+    case Upcoming.Songkick.fetch_venue_calendar(songkick_id) do
+      %{results: %{"event" => events}} -> Enum.map(events, &Upcoming.Event.parse/1)
       _ -> []
     end
   end

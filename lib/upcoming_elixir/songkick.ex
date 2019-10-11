@@ -1,4 +1,4 @@
-defmodule Songkick do
+defmodule Upcoming.Songkick do
   use Retry
 
   defp base_url do

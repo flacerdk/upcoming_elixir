@@ -1,4 +1,4 @@
-defmodule Event do
+defmodule Upcoming.Event do
   @derive {Jason.Encoder, only: [:artist, :date]}
   defstruct [:artist, :date]
 
@@ -12,7 +12,7 @@ defmodule Event do
         _ -> nil
       end
 
-    %Event{
+    %Upcoming.Event{
       artist: artist,
       date:
         case Date.from_iso8601(date) do
