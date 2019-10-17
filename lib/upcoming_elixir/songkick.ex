@@ -59,7 +59,7 @@ defmodule Upcoming.Songkick do
   def fetch_venue_calendar(venue_id) do
     %{"resultsPage" => %{"results" => results}} = fetch_json("/venues/#{venue_id}/calendar.json")
 
-    %{results: results}
+    results["event"]
   end
 
   def fetch_venues_from_file(filename) do

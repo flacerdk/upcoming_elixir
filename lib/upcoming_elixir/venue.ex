@@ -41,11 +41,10 @@ defmodule Upcoming.Venue do
     end
   end
 
-  def get_calendar(%Upcoming.Venue{songkick_id: songkick_id}) do
-    case Upcoming.Songkick.fetch_venue_calendar(songkick_id) do
-      %{results: %{"event" => events}} -> Enum.map(events, &Upcoming.Event.parse/1)
-      _ -> []
-    end
+  def get_calendar(venue) do
+    import Ecto.Query, only: [from: 2]
+
+    Upcoming.Repo.all(from(e in Upcoming.Event, where: e.venue_id == ^venue.id))
   end
 
   def get_all_calendars(venues) do
