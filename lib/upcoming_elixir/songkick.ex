@@ -8,6 +8,22 @@ defmodule Upcoming.Songkick do
     |> Map.put(:query, URI.encode_query(%{"apikey" => api_key}))
   end
 
+  defp append_url(relative_url, base) do
+    %{:path => base_path, :query => base_query} = base
+    %{:path => additional_path, :query => additional_query} = relative_url
+
+    query =
+      Map.merge(
+        URI.decode_query(base_query || ""),
+        URI.decode_query(additional_query || "")
+      )
+      |> URI.encode_query()
+
+    base
+    |> Map.put(:path, base_path <> (additional_path || ""))
+    |> Map.put(:query, query)
+  end
+
   defp fetch(url, page, per_page) do
     parsed_url = URI.parse(url)
 
@@ -18,9 +34,9 @@ defmodule Upcoming.Songkick do
       _ ->
         retry with: exponential_backoff() |> randomize |> expiry(10_000) do
           Mojito.get(
-            URL.append(
+            append_url(
               URI.parse("?page=#{page}&per_page=#{per_page}"),
-              URL.append(parsed_url, base_url())
+              append_url(parsed_url, base_url())
             )
           )
         after
@@ -31,7 +47,7 @@ defmodule Upcoming.Songkick do
     end
   end
 
-  defp fetch_json(relative_url, page \\ 1, per_page \\ 50) do
+  def fetch_json(relative_url, page \\ 1, per_page \\ 50) do
     response = fetch(relative_url, page, per_page)
 
     case response do
