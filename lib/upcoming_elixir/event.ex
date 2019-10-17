@@ -1,8 +1,19 @@
 defmodule Upcoming.Event do
-  @derive {Jason.Encoder, only: [:artist, :date]}
-  defstruct [:artist, :date]
+  use Ecto.Schema
 
-  def parse(%{
+  schema "events" do
+    field :artist, :string
+    field :date, :date, null: true
+    belongs_to(:venue, Upcoming.Venue)
+  end
+
+  def changeset(event, params \\ %{}) do
+    event
+    |> Ecto.Changeset.cast(params, [:artist, :date, :venue_id])
+    |> Ecto.Changeset.validate_required([:venue_id, :artist])
+  end
+
+  def parse(venue_id, %{
         "performance" => performance,
         "start" => %{"date" => date}
       }) do
@@ -12,13 +23,16 @@ defmodule Upcoming.Event do
         _ -> nil
       end
 
-    %Upcoming.Event{
+    %Upcoming.Event{}
+    |> Upcoming.Event.changeset(%{
       artist: artist,
+      venue_id: venue_id,
       date:
         case Date.from_iso8601(date) do
           {:ok, dt} -> dt
           _ -> nil
         end
-    }
+    })
+    |> Upcoming.Repo.insert!()
   end
 end
