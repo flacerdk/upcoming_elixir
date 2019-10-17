@@ -10,6 +10,8 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+copenhagen = %{id: "28617", name: "Copenhagen"}
+
 copenhagen_venues = [
   %{id: "44268", name: "Loppen"},
   %{id: "2740208", name: "Vega"},
@@ -41,7 +43,19 @@ copenhagen_venues = [
   %{id: "4179234", name: "Ideal Bar, Vega - Musikkens Hus"}
 ]
 
+copenhagen_struct =
+  %Upcoming.Location{}
+  |> Upcoming.Location.changeset(%{
+    songkick_id: copenhagen.id,
+    name: copenhagen.name
+  })
+  |> Upcoming.Repo.insert!()
+
 Enum.each(copenhagen_venues, fn %{id: songkick_id, name: name} ->
-  Upcoming.Venue.changeset(%Upcoming.Venue{}, %{songkick_id: songkick_id, name: name})
+  Upcoming.Venue.changeset(%Upcoming.Venue{}, %{
+    songkick_id: songkick_id,
+    name: name,
+    location_id: copenhagen_struct.id
+  })
   |> Upcoming.Repo.insert!()
 end)
