@@ -4,12 +4,13 @@ defmodule Upcoming.Venue do
   schema "venues" do
     field :songkick_id, :string
     field :name, :string
+    belongs_to(:location, Upcoming.Location)
   end
 
   def changeset(venue, params \\ %{}) do
     venue
-    |> Ecto.Changeset.cast(params, [:songkick_id, :name])
-    |> Ecto.Changeset.validate_required([:songkick_id, :name])
+    |> Ecto.Changeset.cast(params, [:songkick_id, :name, :location_id])
+    |> Ecto.Changeset.validate_required([:songkick_id, :name, :location_id])
     |> Ecto.Changeset.unique_constraint(:songkick_id)
   end
 

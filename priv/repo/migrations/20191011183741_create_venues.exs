@@ -5,6 +5,7 @@ defmodule Upcoming.Repo.Migrations.CreateVenues do
     create table(:venues) do
       add :songkick_id, :string
       add :name, :string
+      add :location_id, references(:locations)
     end
 
     create unique_index(:venues, [:songkick_id])
