@@ -53,13 +53,4 @@ defmodule Upcoming.Venue do
     |> Enum.map(fn e -> Upcoming.Event.parse(venue.id, e) end)
     |> Enum.map(&Upcoming.Repo.insert/1)
   end
-
-  def get_all_calendars(venues) do
-    Enum.flat_map(venues, fn v ->
-      calendar = get_calendar(v)
-
-      :timer.sleep(3000)
-      calendar
-    end)
-  end
 end
