@@ -5,6 +5,7 @@ defmodule Upcoming.Venue do
     field :songkick_id, :string
     field :name, :string
     belongs_to(:location, Upcoming.Location)
+    has_many(:events, Upcoming.Event)
   end
 
   def changeset(venue, params \\ %{}) do
