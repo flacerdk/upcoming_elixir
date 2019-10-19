@@ -2,7 +2,10 @@ defmodule UpcomingWeb.VenueController do
   use UpcomingWeb, :controller
 
   def copenhagen_venues do
-    Upcoming.Venue |> Upcoming.Repo.all()
+    import Ecto.Query, only: [from: 2]
+
+    Upcoming.Repo.all(from v in Upcoming.Venue, preload: [:events])
+    |> Enum.filter(fn v -> length(v.events) > 0 end)
   end
 
   def index(conn, _params) do
