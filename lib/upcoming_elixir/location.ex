@@ -4,6 +4,7 @@ defmodule Upcoming.Location do
 
   schema "locations" do
     field :name, :string
+    has_many(:venues, Upcoming.Venue)
 
     timestamps()
   end
