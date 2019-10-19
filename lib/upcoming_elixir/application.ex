@@ -28,4 +28,12 @@ defmodule Upcoming.Application do
     UpcomingWeb.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  def update_venues_calendars() do
+    Upcoming.Repo.all(Upcoming.Venue)
+    |> Enum.each(fn v ->
+      Upcoming.Venue.fetch_calendar(v)
+      :timer.sleep(3000)
+    end)
+  end
 end
