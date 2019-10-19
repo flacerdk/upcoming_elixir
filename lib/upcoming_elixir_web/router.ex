@@ -17,8 +17,10 @@ defmodule UpcomingWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/venues", VenueController, :index
-    get "/venues/:venue_id", VenueController, :show
+    get "/locations", LocationController, :index
+    get "/locations/:location_id", LocationController, :show
+    get "/locations/:location_id/venues", VenueController, :index
+    get "/locations/:location_id/venues/:venue_id", VenueController, :show
   end
 
   # Other scopes may use custom stacks.
