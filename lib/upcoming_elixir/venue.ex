@@ -47,6 +47,12 @@ defmodule Upcoming.Venue do
     Upcoming.Repo.all(from(e in Upcoming.Event, where: e.venue_id == ^venue.id))
   end
 
+  def fetch_calendar(venue) do
+    Upcoming.Songkick.fetch_venue_calendar(venue.songkick_id)
+    |> Enum.map(fn e -> Upcoming.Event.parse(venue.id, e) end)
+    |> Enum.map(&Upcoming.Repo.insert/1)
+  end
+
   def get_all_calendars(venues) do
     Enum.flat_map(venues, fn v ->
       calendar = get_calendar(v)

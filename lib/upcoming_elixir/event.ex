@@ -37,6 +37,5 @@ defmodule Upcoming.Event do
           _ -> nil
         end
     })
-    |> Upcoming.Repo.insert!()
   end
 end
