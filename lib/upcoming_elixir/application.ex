@@ -29,10 +29,10 @@ defmodule Upcoming.Application do
     :ok
   end
 
-  def update_venues_calendars() do
-    Upcoming.Repo.all(Upcoming.Venue)
-    |> Enum.each(fn v ->
-      Upcoming.Venue.fetch_calendar(v)
+  def update_location_calendars() do
+    Upcoming.Repo.all(Upcoming.Location)
+    |> Enum.each(fn l ->
+      Upcoming.Location.fetch_events(l)
       :timer.sleep(3000)
     end)
   end

@@ -15,10 +15,18 @@ defmodule Upcoming.Event do
     |> Ecto.Changeset.unique_constraint(:songkick_id)
   end
 
-  def parse(venue_id, %{
-        "id" => songkick_id,
+  def parse(%{
+        "id" => event_songkick_id,
         "performance" => performance,
-        "start" => %{"date" => date}
+        "start" => %{"date" => date},
+        "venue" => %{
+          "displayName" => venue_name,
+          "id" => venue_songkick_id,
+          "metroArea" => %{
+            "displayName" => location_name,
+            "id" => location_songkick_id
+          }
+        }
       }) do
     artist =
       case performance do
@@ -26,16 +34,24 @@ defmodule Upcoming.Event do
         _ -> nil
       end
 
-    %Upcoming.Event{}
-    |> Upcoming.Event.changeset(%{
-      songkick_id: to_string(songkick_id),
-      artist: artist,
-      venue_id: venue_id,
-      date:
-        case Date.from_iso8601(date) do
-          {:ok, dt} -> dt
-          _ -> nil
-        end
-    })
+    %{
+      event: %{
+        songkick_id: to_string(event_songkick_id),
+        artist: artist,
+        date:
+          case Date.from_iso8601(date) do
+            {:ok, dt} -> dt
+            _ -> nil
+          end
+      },
+      venue: %{
+        songkick_id: to_string(venue_songkick_id),
+        name: venue_name
+      },
+      location: %{
+        songkick_id: to_string(location_songkick_id),
+        name: location_name
+      }
+    }
   end
 end

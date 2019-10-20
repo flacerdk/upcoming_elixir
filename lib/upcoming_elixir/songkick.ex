@@ -72,4 +72,8 @@ defmodule Upcoming.Songkick do
 
     %{results: results, max: max}
   end
+
+  def fetch_location_calendar(location_id) do
+    fetch_json("/metro_areas/#{location_id}/calendar.json")
+  end
 end

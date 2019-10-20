@@ -50,7 +50,7 @@ defmodule Upcoming.Venue do
 
   def fetch_calendar(venue) do
     Upcoming.Songkick.fetch_venue_calendar(venue.songkick_id)
-    |> Enum.map(fn e -> Upcoming.Event.parse(venue.id, e) end)
+    |> Enum.map(fn e -> Upcoming.Event.parse(e).event end)
     |> Enum.map(&Upcoming.Repo.insert/1)
   end
 end
