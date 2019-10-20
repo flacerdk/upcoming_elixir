@@ -30,7 +30,7 @@ defmodule UpcomingWeb do
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/upcoming_elixir_web/templates",
+        root: "web/templates",
         namespace: UpcomingWeb
 
       # Import convenience functions from controllers
