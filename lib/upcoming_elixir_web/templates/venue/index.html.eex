@@ -1,8 +1,0 @@
-<div>
-  <h2>Venues</h2>
-  <ul>
-  <%= for venue <- @venues do %>
-    <li><a href="/<%= venue.location_id %>/venues/<%= venue.id %>"><%= venue.name %></a></li>
-  <% end %>
-  </ul>
-</div>

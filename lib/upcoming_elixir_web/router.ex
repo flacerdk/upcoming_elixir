@@ -18,7 +18,6 @@ defmodule UpcomingWeb.Router do
 
     get "/", LocationController, :index
     get "/:location_id", LocationController, :show
-    get "/:location_id/venues", VenueController, :index
     get "/:location_id/venues/:venue_id", VenueController, :show
   end
 

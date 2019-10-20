@@ -1,6 +1,7 @@
 defmodule Upcoming.Location do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, only: [from: 2]
 
   schema "locations" do
     field :name, :string
@@ -17,8 +18,6 @@ defmodule Upcoming.Location do
   end
 
   def events(location) do
-    import Ecto.Query, only: [from: 2]
-
     from(l in Upcoming.Location,
       where: l.id == ^location.id,
       left_join: venues in assoc(l, :venues),
@@ -28,5 +27,12 @@ defmodule Upcoming.Location do
     |> Upcoming.Repo.one()
     |> Map.get(:venues)
     |> Enum.flat_map(fn %Upcoming.Venue{events: events} -> events end)
+  end
+
+  def venues_with_events(location) do
+    Upcoming.Repo.all(
+      from v in Upcoming.Venue, where: ^location.id == v.location_id, preload: [:events]
+    )
+    |> Enum.filter(fn v -> length(v.events) > 0 end)
   end
 end

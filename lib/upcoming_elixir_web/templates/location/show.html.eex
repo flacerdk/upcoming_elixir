@@ -1,4 +1,8 @@
 <div>
-  <h2><% @location.name %></h2>
-  <a href="/<%= @location.id %>/venues">Venues</a>
+  <h2><%= @location.name %></h2>
+  <ul>
+  <%= for venue <- @venues do %>
+    <li><a href="/<%= venue.location_id %>/venues/<%= venue.id %>"><%= venue.name %></a></li>
+  <% end %>
+  </ul>
 </div>
