@@ -1,4 +1,4 @@
 <div>
   <h2><% @location.name %></h2>
-  <a href="/locations/<%= @location.id %>/venues">Venues</a>
+  <a href="/<%= @location.id %>/venues">Venues</a>
 </div>
