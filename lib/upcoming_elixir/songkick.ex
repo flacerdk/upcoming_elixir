@@ -47,6 +47,22 @@ defmodule Upcoming.Songkick do
     end
   end
 
+  defp fetch_paginated(callback, page, per_page, max_items) do
+    %{results: results, total: total} = callback.(page, per_page)
+
+    case results do
+      r when r == nil or r == [] ->
+        []
+
+      r ->
+        if (page - 1) * length(results) >= min(max_items, total) do
+          r
+        else
+          r ++ fetch_paginated(callback, page + 1, per_page, max_items)
+        end
+    end
+  end
+
   def fetch_json(relative_url, page \\ 1, per_page \\ 50) do
     response = fetch(relative_url, page, per_page)
 
@@ -73,7 +89,20 @@ defmodule Upcoming.Songkick do
     %{results: results, max: max}
   end
 
-  def fetch_location_calendar(location_id) do
-    fetch_json("/metro_areas/#{location_id}/calendar.json")
+  def fetch_location_calendar(location_id, page \\ 1, per_page \\ 50, max_items \\ nil) do
+    callback = fn page, per_page ->
+      %{"resultsPage" => %{"results" => results, "totalEntries" => total}} =
+        fetch_json("/metro_areas/#{location_id}/calendar.json", page, per_page)
+
+      events =
+        case results do
+          %{"event" => events} -> events
+          _ -> []
+        end
+
+      %{results: events, total: total}
+    end
+
+    fetch_paginated(callback, page, per_page, max_items)
   end
 end

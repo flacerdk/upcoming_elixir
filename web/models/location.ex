@@ -49,8 +49,7 @@ defmodule Upcoming.Location do
   end
 
   def fetch_events(location) do
-    %{"resultsPage" => %{"results" => %{"event" => events}}} =
-      Upcoming.Songkick.fetch_location_calendar(location.songkick_id)
+    events = Upcoming.Songkick.fetch_location_calendar(location.songkick_id)
 
     Enum.map(events, &insert_event/1)
   end
